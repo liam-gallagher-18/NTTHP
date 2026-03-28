@@ -61,7 +61,7 @@ T_amb = 4;
 sigma_SB = 5.670374419*10^-8;
 
 %% Other inputs !!IMPORTANT!!
-% before running the code, change other parameters as desired. In
+% before running the code, change other parameters as desired for your particular application. In
 % particular, pay attention to Mesh Wick properties, L_cond and L_evap, Torque, and
 % P_exp
 
@@ -187,6 +187,11 @@ for i = 1:length(L_vary)
             P_vap_interp        = interp1(T, P_vap, T_sat, 'linear', 'extrap');
 
 
+            if T_sat_C < 35
+                warning('T_{sat} , 35C! R_{vs} = 0 assumption may be inaccurate!')
+            end
+
+
             % other important parameters
             m_dot = Q / l_vap_interp;  % Vapor mass flow rate [kg/s]
 
@@ -203,8 +208,8 @@ for i = 1:length(L_vary)
             Pressure_diff = P_i - P_o;
             sigma_h = abs((P_i*IR^2 - P_o*OR^2)/(OR^2 - IR^2) + (IR^2*OR^2*(P_i - P_o))/(IR^2*(OR^2 - IR^2))); % Hoop stress (Lame's equations)
             sigma_r = (P_i*IR^2 - P_o*OR^2)/(OR^2 - IR^2) - (IR^2*OR^2*(P_i - P_o))/(IR^2*(OR^2 - IR^2));      % Radial stress (Lame's equations)
-            sigma_a = P_i*(IR^2/(OR^2 - IR^2));                                                                % Axial/longitudinal stress (Lame's equations)
-            %J = pi*(OD^4 - ID^4)/32;                                                                           % Polar moment of inertia []
+            sigma_a = ((P_i*IR^2) - (P_o*OR^2))/(OR^2 - IR^2);                                                 % Axial/longitudinal stress (Lame's equations)
+            %J = pi*(OD^4 - ID^4)/32;                                                                          % Polar moment of inertia []
             tau = Torque*OR/J;                                                                                 % Shear stress from an applied torque for a thick-walled cylinder
             vonMises = sqrt(0.5*((sigma_h - sigma_a)^2 + (sigma_a - sigma_r)^2 + (sigma_r - sigma_h)^2) + 3*tau^2);
             Sigma = vonMises / sigma_y;
@@ -317,16 +322,16 @@ K_passfail = convhull(valid_combos(:,1), valid_combos(:,2), valid_combos(:,3));
 figure;
 trisurf(K_passfail, valid_combos(:,1), valid_combos(:,2), valid_combos(:,3), ...
     'FaceColor', [0.5 0.8 0.5], 'FaceAlpha', 0.4, 'EdgeColor', 'none')
-xlabel('L [m]')
-ylabel('d_i [m]')
-zlabel('t [m]')
+xlabel('L [m]', 'FontSize', 12)
+ylabel('d_i [m]', 'FontSize', 12)
+zlabel('t [m]', 'FontSize', 12)
 % title('Valid Design Region (All Limits Passed)')
 hold on
 scatter3(valid_combos(:,1), valid_combos(:,2), valid_combos(:,3), 30, 'g', 'filled')
 %if ~isempty(fail_flags)
 %    scatter3(fail_flags(:,1), fail_flags(:,2), fail_flags(:,3), 20, 'r', 'filled')
 %end
-legend('Valid Region', 'Passed Points', 'Failed Points')
+legend('Valid Region', 'Passed Points', 'Failed Points', 'FontSize', 12)
 
 set(gca, 'YDir', 'reverse');
 view(3)
@@ -346,7 +351,7 @@ k1 = boundary(ID_2d, t_2d, 0.1); % 0.1 is shrink factor (adjust as needed)
 fill(ID_2d(k1), t_2d(k1), [0.8 0.9 0.8], 'EdgeColor', 'none', 'FaceAlpha', 0.5); 
 hold on;
 scatter(ID_2d, t_2d, 15, 'g', 'filled', 'MarkerFaceAlpha', 0.6);
-xlabel('d_i [m]'); ylabel('t [m]');
+xlabel('d_i [m]', 'FontSize', 12); ylabel('t [m]', 'FontSize', 12);
 % title('(a) Design Space: t vs ID');
 grid on; set(gca, 'XDir', 'reverse'); % Matching your original YDir reverse logic
 
@@ -356,7 +361,7 @@ k2 = boundary(L_2d, t_2d, 0.1);
 fill(L_2d(k2), t_2d(k2), [0.8 0.9 0.8], 'EdgeColor', 'none', 'FaceAlpha', 0.5);
 hold on;
 scatter(L_2d, t_2d, 15, 'g', 'filled', 'MarkerFaceAlpha', 0.6);
-xlabel('L [m]'); ylabel('t [m]');
+xlabel('L [m]', 'FontSize', 12); ylabel('t [m]', 'FontSize', 12);
 % title('(b) Design Space: t vs L');
 grid on;
 
@@ -366,6 +371,6 @@ k3 = boundary(L_2d, ID_2d, 0.1);
 fill(L_2d(k3), ID_2d(k3), [0.8 0.9 0.8], 'EdgeColor', 'none', 'FaceAlpha', 0.5);
 hold on;
 scatter(L_2d, ID_2d, 15, 'g', 'filled', 'MarkerFaceAlpha', 0.6);
-xlabel('L [m]'); ylabel('d_i [m]');
+xlabel('L [m]', 'FontSize', 12); ylabel('d_i [m]', 'FontSize', 12);
 % title('(c) Design Space: ID vs L');
 grid on;

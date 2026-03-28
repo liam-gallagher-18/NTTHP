@@ -68,7 +68,7 @@ P_amb = P_amb_atm*101325;
 h = 30;
 
 %% Geometry Sweep - adjust as needed
-num_pts = 55;
+num_pts = 40;
 
 L_vary  = linspace(0.05,    1,   num_pts);
 ID_vary = linspace(0.003,   0.025, num_pts);
@@ -81,7 +81,7 @@ t_vary  = linspace(0.0005,  0.01, num_pts);
 
 
 %% Other Parameters
-% Change as needed
+% Change as needed for your particular application
 k_NiTi = 8.9;
 
 % Mesh Wick Properties (stainless steel assumed)
@@ -174,7 +174,7 @@ for i = 1:length(L_vary)
             R_NiTi_cond = log(OD/ID)/(2*pi*L_cond*k_NiTi);
             R_wick_evap = log(OD_wick/ID_wick)/(2*pi*L_evap*k_wick_eff);
             R_wick_cond = log(OD_wick/ID_wick)/(2*pi*L_cond*k_wick_eff);
-            R_vs = 0; % Assumed
+            R_vs = 0; % Assumed for T_vap > 35 C
             R_ext = 1/(h*A_cond);
 
             T_evap = T_amb + Q * (R_NiTi_evap + R_wick_evap + R_vs + R_wick_cond + R_NiTi_cond + R_ext);
@@ -185,6 +185,10 @@ for i = 1:length(L_vary)
             T_sat_C = T_sat - 273.15; % convert to C
             P_exp_mmHg = 10^(A_antoine - (B_antoine/(C_antoine + T_sat_C)));
             P_exp = P_exp_mmHg*133.3223684; % convert to Pa
+
+            if T_sat_C < 35
+                warning('T_{sat} , 35C! R_{vs} = 0 assumption may be inaccurate!')
+            end
 
             l_vap_interp        = interp1(T, l_vap, T_sat, 'linear', 'extrap');
             sigma_l_interp      = interp1(T, sigma_l, T_sat, 'linear', 'extrap');
@@ -211,7 +215,7 @@ for i = 1:length(L_vary)
             Pressure_diff = P_i - P_o;
             sigma_h = ((P_i*IR^2 - P_o*OR^2)/(OR^2 - IR^2) + (IR^2*OR^2*(P_i - P_o))/(IR^2*(OR^2 - IR^2)));    % Hoop stress (Lame's equations)
             sigma_r = (P_i*IR^2 - P_o*OR^2)/(OR^2 - IR^2) - (IR^2*OR^2*(P_i - P_o))/(IR^2*(OR^2 - IR^2));      % Radial stress (Lame's equations)
-            sigma_a = P_i*(IR^2/(OR^2 - IR^2));                                                                % Axial/longitudinal stress (Lame's equations)
+            sigma_a = ((P_i*IR^2) - (P_o*OR^2))/(OR^2 - IR^2);                                                 % Axial/longitudinal stress (Lame's equations)
             tau = Torque*OR/J;                                                                                 % Torsional stress from an applied torque for a thick-walled cylinder
             %vonMises = sqrt(sigma_h^2 + sigma_a^2 - sigma_h*sigma_a + 3*tau^2);
             vonMises = sqrt(0.5*((sigma_h - sigma_a)^2 + (sigma_a - sigma_r)^2 + (sigma_r - sigma_h)^2) + 3*tau^2);
@@ -341,16 +345,16 @@ K_passfail = convhull(valid_geoms(:,1), valid_geoms(:,2), valid_geoms(:,3));
 figure;
 trisurf(K_passfail, valid_geoms(:,1), valid_geoms(:,2), valid_geoms(:,3), ...
     'FaceColor', [0.5 0.8 0.5], 'FaceAlpha', 0.4, 'EdgeColor', 'none')
-xlabel('L [m]')
-ylabel('d_i [m]')
-zlabel('t [m]')
+xlabel('L [m]', 'FontSize', 12)
+ylabel('d_i [m]', 'FontSize', 12)
+zlabel('t [m]', 'FontSize', 12)
 % title('Valid Design Region (All Limits Passed)')
 hold on
 scatter3(valid_geoms(:,1), valid_geoms(:,2), valid_geoms(:,3), 30, 'g', 'filled')
 % if ~isempty(fail_flags)
 %    scatter3(fail_flags(:,1), fail_flags(:,2), fail_flags(:,3), 20, 'r', 'filled')
 % end
-legend('Valid Region', 'Passed Points', 'Failed Points')
+legend('Valid Region', 'Passed Points', 'Failed Points', 'FontSize', 12)
 
 set(gca, 'YDir', 'reverse');
 view(3)
@@ -370,7 +374,7 @@ k1 = boundary(ID_2d, t_2d, 0.1); % 0.1 is shrink factor (adjust as needed)
 fill(ID_2d(k1), t_2d(k1), [0.8 0.9 0.8], 'EdgeColor', 'none', 'FaceAlpha', 0.5); 
 hold on;
 scatter(ID_2d, t_2d, 15, 'g', 'filled', 'MarkerFaceAlpha', 0.6);
-xlabel('d_i [m]'); ylabel('t [m]');
+xlabel('d_i [m]', 'FontSize', 12); ylabel('t [m]', 'FontSize', 12);
 % title('(a) Design Space: t vs ID');
 grid on; set(gca, 'XDir', 'reverse'); % Matching your original YDir reverse logic
 
@@ -380,7 +384,7 @@ k2 = boundary(L_2d, t_2d, 0.1);
 fill(L_2d(k2), t_2d(k2), [0.8 0.9 0.8], 'EdgeColor', 'none', 'FaceAlpha', 0.5);
 hold on;
 scatter(L_2d, t_2d, 15, 'g', 'filled', 'MarkerFaceAlpha', 0.6);
-xlabel('L [m]'); ylabel('t [m]');
+xlabel('L [m]', 'FontSize', 12); ylabel('t [m]', 'FontSize', 12);
 % title('(b) Design Space: t vs L');
 grid on;
 
@@ -390,7 +394,7 @@ k3 = boundary(L_2d, ID_2d, 0.1);
 fill(L_2d(k3), ID_2d(k3), [0.8 0.9 0.8], 'EdgeColor', 'none', 'FaceAlpha', 0.5);
 hold on;
 scatter(L_2d, ID_2d, 15, 'g', 'filled', 'MarkerFaceAlpha', 0.6);
-xlabel('L [m]'); ylabel('d_i [m]');
+xlabel('L [m]', 'FontSize', 12); ylabel('d_i [m]', 'FontSize', 12);
 % title('(c) Design Space: ID vs L');
 grid on;
 
