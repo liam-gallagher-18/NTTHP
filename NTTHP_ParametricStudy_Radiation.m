@@ -66,7 +66,7 @@ sigma_SB = 5.670374419*10^-8;
 % P_exp
 
 %% Geometry Sweep - adjust as needed
-num_pts = 40;
+num_pts = 55;
 
 L_vary  = linspace(0.05,    3,   num_pts);
 ID_vary = linspace(0.003,   0.03, num_pts);
@@ -353,7 +353,8 @@ hold on;
 scatter(ID_2d, t_2d, 15, 'g', 'filled', 'MarkerFaceAlpha', 0.6);
 xlabel('d_i [m]', 'FontSize', 12); ylabel('t [m]', 'FontSize', 12);
 % title('(a) Design Space: t vs ID');
-grid on; set(gca, 'XDir', 'reverse'); % Matching your original YDir reverse logic
+grid on; 
+%set(gca, 'XDir', 'reverse'); % Matching your original YDir reverse logic
 
 % --- Plot 2: t vs L ---
 subplot(1, 3, 2);
