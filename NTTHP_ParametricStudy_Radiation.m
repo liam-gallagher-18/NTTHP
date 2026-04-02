@@ -256,6 +256,16 @@ for i = 1:length(L_vary)
             cond_ok = condenser < 1;
 
             all_ok = twist_ok && detwin_ok && sigma_ok && B_ok && capPressure_ok && capillary_ok && viscous_ok && sonic_ok && entrain_ok && boil_ok && cond_ok;
+    
+            % If T_sat is below the data table, eliminate the invalid result
+            if T_sat < min(T) 
+                all_ok = false;
+            end
+            
+            % Make sure tube is physically possible
+            if L <= (L_evap + L_cond)
+                all_ok = false;
+            end
 
             if all_ok
                 valid_combos(end+1, :) = [L, ID, t];
