@@ -69,10 +69,11 @@ h = 30;
 
 %% Geometry Sweep - adjust as needed
 num_pts = 55;
+num_pts_t = 100; % High resolution for thickness to find narrow windows
 
 L_vary  = linspace(0.05,    1,   num_pts);
 ID_vary = linspace(0.003,   0.025, num_pts);
-t_vary  = linspace(0.0005,  0.01, num_pts);
+t_vary  = linspace(0.0005,  0.01, num_pts_t);
 
 % Use this range to see "microscopic" view of some valid geometries
 % L_vary  = linspace(4.5,    5.5,   num_pts);
@@ -353,8 +354,7 @@ end
 K_passfail = convhull(valid_geoms(:,1), valid_geoms(:,2), valid_geoms(:,3));
 
 figure;
-trisurf(K_passfail, valid_geoms(:,1), valid_geoms(:,2), valid_geoms(:,3), ...
-    'FaceColor', [0.5 0.8 0.5], 'FaceAlpha', 0.4, 'EdgeColor', 'none')
+%trisurf(K_passfail, valid_geoms(:,1), valid_geoms(:,2), valid_geoms(:,3), 'FaceColor', [0.5 0.8 0.5], 'FaceAlpha', 0.4, 'EdgeColor', 'none')
 xlabel('L [m]', 'FontSize', 12)
 ylabel('d_i [m]', 'FontSize', 12)
 zlabel('t [m]', 'FontSize', 12)
@@ -364,7 +364,7 @@ scatter3(valid_geoms(:,1), valid_geoms(:,2), valid_geoms(:,3), 30, 'g', 'filled'
 % if ~isempty(fail_flags)
 %    scatter3(fail_flags(:,1), fail_flags(:,2), fail_flags(:,3), 20, 'r', 'filled')
 % end
-legend('Valid Region', 'Passed Points', 'Failed Points', 'FontSize', 12)
+%legend('Valid Region', 'Passed Points', 'Failed Points', 'FontSize', 12)
 
 set(gca, 'YDir', 'reverse');
 view(3)
@@ -381,7 +381,7 @@ figure('Color', 'w', 'Position', [100, 100, 1200, 350]);
 % --- Plot 1: t vs ID ---
 subplot(1, 3, 1);
 k1 = boundary(ID_2d, t_2d, 0.1); % 0.1 is shrink factor (adjust as needed)
-fill(ID_2d(k1), t_2d(k1), [0.8 0.9 0.8], 'EdgeColor', 'none', 'FaceAlpha', 0.5); 
+%fill(ID_2d(k1), t_2d(k1), [0.8 0.9 0.8], 'EdgeColor', 'none', 'FaceAlpha', 0.5); 
 hold on;
 scatter(ID_2d, t_2d, 15, 'g', 'filled', 'MarkerFaceAlpha', 0.6);
 xlabel('d_i [m]', 'FontSize', 12); ylabel('t [m]', 'FontSize', 12);
@@ -392,7 +392,7 @@ grid on;
 % --- Plot 2: t vs L ---
 subplot(1, 3, 2);
 k2 = boundary(L_2d, t_2d, 0.1);
-fill(L_2d(k2), t_2d(k2), [0.8 0.9 0.8], 'EdgeColor', 'none', 'FaceAlpha', 0.5);
+%fill(L_2d(k2), t_2d(k2), [0.8 0.9 0.8], 'EdgeColor', 'none', 'FaceAlpha', 0.5);
 hold on;
 scatter(L_2d, t_2d, 15, 'g', 'filled', 'MarkerFaceAlpha', 0.6);
 xlabel('L [m]', 'FontSize', 12); ylabel('t [m]', 'FontSize', 12);
@@ -402,7 +402,7 @@ grid on;
 % --- Plot 3: ID vs L ---
 subplot(1, 3, 3);
 k3 = boundary(L_2d, ID_2d, 0.1);
-fill(L_2d(k3), ID_2d(k3), [0.8 0.9 0.8], 'EdgeColor', 'none', 'FaceAlpha', 0.5);
+%fill(L_2d(k3), ID_2d(k3), [0.8 0.9 0.8], 'EdgeColor', 'none', 'FaceAlpha', 0.5);
 hold on;
 scatter(L_2d, ID_2d, 15, 'g', 'filled', 'MarkerFaceAlpha', 0.6);
 xlabel('L [m]', 'FontSize', 12); ylabel('d_i [m]', 'FontSize', 12);
@@ -449,89 +449,3 @@ set(findall(gcf,'-property','FontSize'),'FontSize', 12, 'FontName', 'Arial');
 % title('3D Map of Valid Geometries');
 % hold off;
 
-%% MISC
-%% Heat pipe limits map
-
-%% Sigma and B
-
-% target_L = L_vary(round(end/2));
-% target_t = t_vary(round(end/2));
-% 
-% % Create a logical index for the specific L and t we want to look at
-% % Since we stored them linearly, we can recreate the logic:
-% [L_grid, ID_grid, t_grid] = meshgrid(L_vary, ID_vary, t_vary);
-% % Note: meshgrid ordering can be tricky, it's safer to just filter the 1D arrays:
-% 
-% % 1. Identify which points in our big "all" arrays match the specific L and t
-% idx = (L_all == target_L) & (t_all == target_t);
-% 
-% figure('Color', 'w', 'Name', 'Sensitivity Analysis');
-% 
-% % 2. Plot Sigma (Stress Ratio)
-% yyaxis right
-% % Use ID_all(idx) so the X and Y vectors are the same length
-% plot(ID_all(idx), Sigma_all(idx), '-o', 'Color', 'r', 'LineWidth', 1.5); 
-% ylabel('Stress Ratio (\sigma / \sigma_y)');
-% ylim([0 2])
-% hold on;
-% 
-% % 3. Plot B (Buckling Ratio)
-% yyaxis left
-% ylim([0 2])
-% plot(ID_all(idx), B_all(idx), '-s', 'Color', 'b', 'LineWidth', 1.5);
-% ylabel('Buckling Ratio (B)');
-% hold on;
-% yline(1, 'm--', 'Buckling Limit', 'LineWidth', 2);
-% 
-% xlabel('Inner Diameter (ID) [m]');
-% title(sprintf('Effect of ID on Stress and Buckling\n(Fixed L = %.2f m, t = %.4f m)', target_L, target_t));
-% grid on;
-% legend('Sigma Ratio', 'Buckling Ratio', 'Threshold', 'Location', 'best');
-% ylim([0 2])
-
-
-%% B map
-% % Prepare Data for Plotting
-% % Flatten the 3D arrays into 1D vectors.
-% tau_flat = tau_star_all(:);
-% P_flat   = P_star_all(:);
-% B_flat   = B_all(:);
-% 
-% % Restrict to a domain between 0 and 2
-% idx = (tau_flat >= 0) & (tau_flat <= 2) & (P_flat >= 0) & (P_flat <= 2);
-% tau_plot = tau_flat(idx);
-% P_plot   = P_flat(idx);
-% B_plot   = B_flat(idx);
-% 
-% % Interpolate Scattered Data onto a Regular Grid
-% tau_lin = linspace(0, 2, 200);  % 200 points from 0 to 2 for tau*
-% P_lin   = linspace(0, 2, 200);  % 200 points from 0 to 2 for P*
-% [TAU, P_grid] = meshgrid(tau_lin, P_lin);
-% 
-% % Interpolate using griddata. Here we use a 'cubic' interpolation.
-% B_interp = griddata(tau_plot, P_plot, B_plot, TAU, P_grid, 'cubic');
-% 
-% % Plot the results
-% figure;
-% contourf(TAU, P_grid, B_interp, 20, 'LineStyle','none');  % 20 contour levels
-% colorbar;
-% xlim([0 2]);
-% ylim([0 2]);
-% xlabel('\tau^*');
-% ylabel('P^*');
-% title('Contoured Map of B Values in the (\tau^*, P^*) Space');
-% 
-% % Create a colormap with many points (e.g., 256) using jet
-% caxis([0 4]);
-% ncolors = 256;
-% cmap = jet(ncolors);
-% 
-% % Force the last color to be pure red
-% cmap(end,:) = [1, 0, 0];
-% colormap(cmap);
-% 
-% % Overlay a black line where B == 1
-% hold on;
-% [~, hC] = contour(TAU, P_grid, B_interp, [1 1], 'k', 'LineWidth', 3);
-% legend(hC, 'B = 1');
-% hold off;
