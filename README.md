@@ -1,11 +1,11 @@
 # NTTHP
 Supplement to my Master's thesis and IJHMT journal paper "A PARAMETRIC STUDY OF THE FEASIBILITY OF A SHAPE MEMORY ALLOY TORQUE TUBE HEAT PIPE FOR THERMAL TRANSPORT AND MECHANICAL ACTUATION."
 
-Two codes were developed and made available in this repository. They are almost identical, but one assumes a cooling method of convection at the condenser end of the heat pipe, and the other assumes radiation as the cooling method.
+The codes "NTTHP_ParametricStudy_Convection" and "NTTHP_ParametricStudy_Radiation" were developed for these papers and made available in this repository. These codes may be utilized in future efforts attempting to design a Nitinol torque tube heat pipe (or NTTHP). They are almost identical, but one assumes a cooling method of convection at the condenser end of the heat pipe, and the other assumes radiation as the cooling method.
 
-As you step through either code, pay attention to each input value that should be changed, particularly before the loop, such as heat input (Q). There are several comments throughout each code which provide clarity on the most important parameters to be changed for your particular design.
+As you step through either code, pay attention to each input value that should be changed, particularly before the loop, such as heat input (Q). There are several comments throughout each code which provide clarity on the most important parameters to be changed for your particular design. For convection, your convective heat transfer coefficient h is of great importance. For radiation, your ambient temperature T_amb is an important parameter which you must choose to accurately model your intended environment.
 
-Perhaps the most influential design decision you must make regarding input parameters is the heat pipe's working fluid selection. The codes require fluid properties in order to evaluate the NTTHP's limits. Working fluid properties vary with temperature. so you must upload a file with all relevant properties as they vary with temperature. 
+Perhaps the most influential design decision you must make regarding input parameters is the heat pipe's working fluid selection. The codes require fluid properties in order to evaluate the NTTHP's limits. Working fluid properties vary with temperature. so you must upload a file with all relevant properties as they vary with temperature.
 
 The convection code assumes a working fluid of water and the radiation code assumes ammonia, because these are common choices for the environments modeled in each code. The convection case assumes a laboratory environment (ideal for water) and the radiation case assumes a space environment (ideal for ammonia). I developed the attached Excel files which respectively contain fluid properties of water and ammonia. These are references at the top of the code. If you intend to use my files, you must change the line:
 
