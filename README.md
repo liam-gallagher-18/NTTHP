@@ -1,5 +1,5 @@
 # NTTHP
-Supplement to my Master's thesis and IJHMT journal paper "A PARAMETRIC STUDY OF THE FEASIBILITY OF A SHAPE MEMORY ALLOY TORQUE TUBE HEAT PIPE FOR THERMAL TRANSPORT AND MECHANICAL ACTUATION."
+Supplement to my Master's thesis and journal paper submitted to IJHMT: "A PARAMETRIC STUDY OF THE FEASIBILITY OF A SHAPE MEMORY ALLOY TORQUE TUBE HEAT PIPE FOR THERMAL TRANSPORT AND MECHANICAL ACTUATION."
 
 The codes "NTTHP_ParametricStudy_Convection" and "NTTHP_ParametricStudy_Radiation" were developed for these papers and made available in this repository. These codes may be utilized in future efforts attempting to design a Nitinol torque tube heat pipe (or NTTHP). They are almost identical, but one assumes a cooling method of convection at the condenser end of the heat pipe, and the other assumes radiation as the cooling method.
 
@@ -14,3 +14,5 @@ waterProperties = readtable('xxx') or ammoniaProperties = readtable('xxx')
 to make the 'xxx' match the location of the file on your machine.
 
 If you'd like to test a different working fluid, you will need to capture its many relevant properties over a varying temperature range. I recommend downloading one of my provided Excel files, keeping the exact same format, but replacing all the values with the correct values for some other working fluid. Many properties for many working fluids can be found at the end of "Heat Pipes: Design, Theory, and Application" by Jouhara, et al and "Heat Pipe Science and Technology" by Faghri. You must pay attention to the ideal temperature range for your desired working fluid. If you assess an NTTHP at a temperature far outside of its working fluid's ideal temperature range, the code will extrapolate property values to that extreme temperature. These results CANNOT be trusted. For example, if you evaluate a water heat pipe at 4 K, it will extrapolate its vapor density to a negative value, which is non-physical. Thus, the results will either make no sense or will be entirely untrustworthy.
+
+Research funded by NASA Goddard and Dr. Rydge Mulford at the University of Dayton's thermal engineering laboratory, the DaTA Lab.
